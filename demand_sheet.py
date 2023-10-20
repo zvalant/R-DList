@@ -80,7 +80,6 @@ class DemandSheet:
                 message = msg.error_key_collision
                 error_email.error_email(message,engineer_email.get_email(engr_val))
                 self.dataframe = self.dataframe.drop(row)
-                print("Collision Email Sent!")
                 continue
             elif key == "nan":
                 message = msg.error_key_not_assigned
@@ -98,6 +97,7 @@ class DemandSheet:
             else:
                 message = msg.error_duplicate_part
                 error_email.error_email(message,engineer_email.get_email(engr_val))
+                time.sleep(1)
                 self.dataframe = self.dataframe.drop(row)
                 continue
 

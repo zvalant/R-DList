@@ -58,7 +58,8 @@ class DataComparison:
                     msg = EmailMessages(0,row_index)
                     message = msg.error_reused_id
                     error_email.error_email(message, engineer_email.get_email(current_engineer))
-                    current_sheet = current_sheet.drop(row_index-2)
+                    current_sheet.at[row_index-2,"Part Number"] = past_part_number
+
                     continue
 
                 if current_machine != past_machine:
@@ -118,7 +119,7 @@ class DataComparison:
                 if self.past_cache[id].status == status.DRIVING:
                     self.removed_demand = part_assignment(self.removed_demand,past_machine,past_due_date,past_part_number,past_quantity,past_description,past_status,past_engineer)
                     self.modified.add(past_machine)
-
+        return current_sheet
     def status_sorter(self):
         # checks to see if project needs to be modifed and passes it to correct map to update pdfs in PdfManager
         for project in self.current_projects:

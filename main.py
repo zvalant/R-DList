@@ -23,7 +23,7 @@ startup_pdfs = PdfManager()
 startup_pdfs.create_driving_pdfs(demand_sheet_past.projects) # create pdfs for past projects
 demand_sheet_current.demand_generator(demand_sheet_current.dataframe,CURRENT_FILE) # generate projects for current sheet
 sheet_delta = DataComparison(demand_sheet_current, demand_sheet_past) # pass data to compare both dataframes
-sheet_delta.activity_search(demand_sheet_current.dataframe)
+demand_sheet_current.dataframe = sheet_delta.activity_search(demand_sheet_current.dataframe)
 sheet_delta.status_sorter() # create issued and driving maps and pass info to make pdfs
 pdf_actions = PdfManager(sheet_delta)
 sheet_delta.driving = utility.inventory_update(sheet_delta.driving,MRP_FILEPATH)
@@ -33,5 +33,6 @@ pdf_actions.create_activity_pdf()
 pdf_actions.pdf_cleanup(sheet_delta.driving)
 send_email = EmailManager()
 send_email.send_activity_pdf()
+send_email.close_smtp_connection()
 demand_sheet_current.dataframe.to_csv(DEMAND_PAST_FILE)
 
