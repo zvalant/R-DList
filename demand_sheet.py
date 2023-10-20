@@ -79,11 +79,13 @@ class DemandSheet:
             if key in self.key_cache:
                 message = msg.error_key_collision
                 error_email.error_email(message,engineer_email.get_email(engr_val))
+                self.dataframe = self.dataframe.drop(row)
                 print("Collision Email Sent!")
                 continue
             elif key == "nan":
                 message = msg.error_key_not_assigned
                 error_email.error_email(message, engineer_email.get_email(engr_val))
+                self.dataframe = self.dataframe.drop(row)
                 # make error messge later
                 continue
             current_part = demand_sheet[dct.PART_NUMBER][row]  # setup current part and project
@@ -96,6 +98,7 @@ class DemandSheet:
             else:
                 message = msg.error_duplicate_part
                 error_email.error_email(message,engineer_email.get_email(engr_val))
+                self.dataframe = self.dataframe.drop(row)
                 continue
 
             self.all_parts[current_part] = "Not Found"

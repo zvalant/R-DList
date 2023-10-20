@@ -1,5 +1,8 @@
 from utility import part_assignment
 import status
+from email_directory import EmailDirectory
+from email_manager import EmailManager
+from email_messages import EmailMessages
 class DataComparison:
     def __init__(self,current_sheet,past_sheet):
         self.current_projects = current_sheet.projects
@@ -31,7 +34,9 @@ class DataComparison:
         self.modified = set()
         self.error_found = False
 
-    def activity_search(self):
+    def activity_search(self,current_sheet):
+        error_email = EmailManager()
+        engineer_email = EmailDirectory()
         for id in self.current_cache:
             current_machine = self.current_cache[id].machine
             current_part_number = self.current_cache[id].part_number
@@ -48,8 +53,14 @@ class DataComparison:
                 past_status = self.past_cache[id].status
 
                 if current_part_number != past_part_number:
-                    #set up another error handling to change unique id
-                    self.error_found =True
+                    row = current_sheet[current_sheet["UniqueID"] == id]
+                    row_index = int(row.index.values) + 2
+                    msg = EmailMessages(0,row_index)
+                    message = msg.error_reused_id
+                    error_email.error_email(message, engineer_email.get_email(current_engineer))
+                    current_sheet = current_sheet.drop(row_index-2)
+                    continue
+
                 if current_machine != past_machine:
                     self.project_change = part_assignment(self.project_change,f"{current_machine} was {past_machine}", current_due_date,current_part_number,current_quantity,current_description,current_status,current_engineer)
                     self.modified.add(current_machine)

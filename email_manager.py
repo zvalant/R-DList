@@ -11,8 +11,8 @@ import email_messages as messages
 class EmailManager:
     def __init__(self):
         self.UPDATE_FILEPATH = "G:\\SW\\_Administration\\R&D Items Test\\pdfs\\EMAIL_PDFS\\R&D Sheet Update.pdf"
-        self.SENDER =""
-        self.SMTP_PORT = ""
+        self.SENDER = ""
+        self.SMTP_PORT =
         self.SMTP_SERVER = ""
         self.TITLE_UPDATE = "R&D Sheet Activity Report"
         self.SUBJECT_UPDATE = f"R&D Demand Update"
@@ -23,7 +23,7 @@ class EmailManager:
 
     def send_activity_pdf(self):
         msg_txt = self.msg_txt.report
-        recipients = ""
+        recipients = [""gi , ]
         self.msg["To"] = COMMASPACE.join(recipients)
         self.smtp_connection.starttls()
         # smtp_connection.login(sender,password)  Dont need login if its dummy email to internal network
