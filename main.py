@@ -15,24 +15,26 @@ demand_sheet_current = DemandSheet(DEMAND_CURRENT_FILE)
 
 formatted_date = utility.current_mrp_date()
 MRP_FILEPATH = f"S:\\IT\\Reports\\MRP\\MRP-{formatted_date}.txt"
-demand_sheet_past.create_dataframe() #create dataframes for current and past files
-demand_sheet_current.create_dataframe()
-demand_sheet_past.demand_generator(demand_sheet_past.dataframe,PAST_FILE)
-demand_sheet_past.projects = utility.inventory_update(demand_sheet_past.projects,MRP_FILEPATH)
-startup_pdfs = PdfManager()
-startup_pdfs.create_driving_pdfs(demand_sheet_past.projects) # create pdfs for past projects
-demand_sheet_current.demand_generator(demand_sheet_current.dataframe,CURRENT_FILE) # generate projects for current sheet
-sheet_delta = DataComparison(demand_sheet_current, demand_sheet_past) # pass data to compare both dataframes
-demand_sheet_current.dataframe = sheet_delta.activity_search(demand_sheet_current.dataframe)
-sheet_delta.status_sorter() # create issued and driving maps and pass info to make pdfs
-pdf_actions = PdfManager(sheet_delta)
-sheet_delta.driving = utility.inventory_update(sheet_delta.driving,MRP_FILEPATH)
-pdf_actions.create_driving_pdfs(sheet_delta.driving_modified)
-pdf_actions.create_issued_pdfs(sheet_delta.issued_modified)
-pdf_actions.create_activity_pdf()
-pdf_actions.pdf_cleanup(sheet_delta.driving)
-send_email = EmailManager()
-send_email.send_activity_pdf()
-send_email.close_smtp_connection()
-demand_sheet_current.dataframe.to_csv(DEMAND_PAST_FILE)
+
+while True:
+    demand_sheet_past.create_dataframe() #create dataframes for current and past files
+    demand_sheet_current.create_dataframe()
+    demand_sheet_past.demand_generator(demand_sheet_past.dataframe,PAST_FILE)
+    demand_sheet_past.projects = utility.inventory_update(demand_sheet_past.projects,MRP_FILEPATH)
+    demand_sheet_current.demand_generator(demand_sheet_current.dataframe,CURRENT_FILE) # generate projects for current sheet
+    sheet_delta = DataComparison(demand_sheet_current, demand_sheet_past) # pass data to compare both dataframes
+    demand_sheet_current.dataframe = sheet_delta.activity_search(demand_sheet_current.dataframe)
+    sheet_delta.status_sorter() # create issued and driving maps and pass info to make pdfs
+    pdf_actions = PdfManager(sheet_delta)
+    sheet_delta.driving = utility.inventory_update(sheet_delta.driving,MRP_FILEPATH)
+    pdf_actions.create_driving_pdfs(sheet_delta.driving)
+    pdf_actions.create_issued_pdfs(sheet_delta.issued_change)
+    if sheet_delta.modified:
+        pdf_actions.create_activity_pdf()
+        pdf_actions.pdf_removed_demand(sheet_delta.driving)
+        send_email = EmailManager()
+        send_email.send_activity_pdf()
+        send_email.close_smtp_connection()
+    demand_sheet_current.dataframe.to_csv(DEMAND_PAST_FILE)
+    time.sleep(30)
 

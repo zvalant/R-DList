@@ -1,7 +1,10 @@
 from fpdf import FPDF
 import time
 import os
-
+import datetime
+from email_manager import EmailManager
+from email_directory import EmailDirectory
+from email_messages import EmailMessages
 class PdfManager:
     def __init__(self,delta=None):
         self.delta = delta
@@ -9,9 +12,12 @@ class PdfManager:
         self.driving_folder_path = "G:\\SW\\_Administration\\R&D Items Test\\pdfs\\DRIVING_2"
         self.issued_folder_path = "G:\\SW\\_Administration\\R&D Items Test\\pdfs\\ISSUED_2"
         self.email_file_path = f"G:\\SW\\_Administration\\R&D Items Test\\pdfs\\EMAIL_PDFS\\{self.TITLE}.pdf"
+        self.send_attempts = 0
 
 
     def create_driving_pdfs(self,demand):
+        error_email = EmailManager()
+        engineer_email = EmailDirectory()
         # generate pdf for all projects in hash
         current_demand = demand
         for project in current_demand:
@@ -34,33 +40,48 @@ class PdfManager:
                     pdf.set_font(family="Times", style="B", size=18)
                     pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}X)    OH: {current_part.inventory}")
                     pdf.set_text_color(0,0,0)
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             filename = project.replace("/", "-")
             filename = filename.replace("?", "")
-            while True:  # make sure this still works as intended
+            filename += f" {current_time}"
+            filename = filename.replace(":", "-")
+            self.pdf_project_cleanup(project)
+            print(filename)
+            while True:
+                if self.send_attempts > 30:
+                    msg = EmailMessages(project)
+                    message = msg.locked_pdf_driving
+                    error_email.error_email(message, engineer_email.get_email(current_part.engineer))#change to email all
                 try:
                     pdf.output(f"{self.driving_folder_path}//{filename}.pdf")
                     break
                 except Exception as e:
                     print(f"{e} PDF Still Open")
-                    time.sleep(10)
+                    time.sleep(1)
+                    self.send_attempts +=1
     def create_issued_pdfs(self,demand):
         for project in demand:
             for target_date in demand[project].target_dates:
-                title = f"{project} {target_date}"
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                title = f"{project}"
                 # generate pdf for all projects in hash
                 pdf = FPDF(orientation="P", unit="pt", format="Letter")
                 pdf.add_page()
                 pdf.set_font(family="Times", style="B", size=24)
-                pdf.multi_cell(w=0, h=50, txt=title)  # create pdf header with title of project
+                pdf.multi_cell(w=0, h=50, txt=f"{title} Issued: {current_time}")  # create pdf header with title of project
                 for part in demand[project].target_dates[target_date].parts:
                     current_part = demand[project].target_dates[target_date].parts[part]
                     pdf.set_font(family="Times", style="B", size=18)
                     pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  ({current_part.quantity}X)  REQ by: {current_part.engineer}")
-                    filename = title.replace("/", "-")
-                    filename = filename.replace("?", "")
                 while True:  # make sure this still works as intended
+                    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    filename = title + current_time
+                    filename = filename.replace("/", "-")
+                    filename = filename.replace(":", "-")
+                    filename = filename.replace("?", "")
                     try:
                         pdf.output(f"{self.issued_folder_path}//{filename}.pdf")
+                        time.sleep(1)
                         break
                     except Exception as e:
                         print(f"{e} PDF Still Open")
@@ -94,9 +115,10 @@ class PdfManager:
             except Exception as e:
                 print(f"{e} PDF Still Open")
                 time.sleep(10)
-    def pdf_cleanup(self,demand):
+    def pdf_removed_demand(self,demand):
+        timestamp_length = -20
         for filename in os.listdir(self.driving_folder_path):
-            project = filename.removesuffix(".pdf")
+            project = filename.removesuffix(".pdf")[:timestamp_length]
             if project not in demand:
                 file_path = os.path.join(self.driving_folder_path,filename)
                 try:
@@ -105,4 +127,15 @@ class PdfManager:
                         print(f"Deleted {filename}")
                 except Exception as e:
                     print(f"Error deleting {filename}: {e}")
-
+    def pdf_project_cleanup(self,current_project):
+        timestamp_length = -20
+        for filename in os.listdir(self.driving_folder_path):
+            project = filename.removesuffix(".pdf")[:timestamp_length]
+            if project==current_project:
+                file_path = os.path.join(self.driving_folder_path, filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                        print(f"Deleted {filename}")
+                except Exception as e:
+                    print(f"Error deleting {filename}: {e}")

@@ -17,10 +17,8 @@ class DataComparison:
         self.driving_change = {}
         self.picked_change = {}
         self.issued_change = {}
-        self.driving_modified = {}
         self.driving = {}
         self.issued = {}
-        self.issued_modified = {}
         self.activity = {
             "New Demand":self.new_demand,
             "Removed Demand": self.removed_demand,
@@ -134,16 +132,9 @@ class DataComparison:
                     current_engineer = self.current_projects[project].target_dates[due_date].parts[part].engineer
                     current_inventory = self.current_projects[project].target_dates[due_date].parts[part].inventory
                     if current_status == status.DRIVING:
-                        if project in self.modified:
-                            self.driving_modified = part_assignment(self.driving_modified,current_machine,current_due_date,current_part_number,current_quantity,current_description,current_status,current_engineer, current_inventory)
-                        self.driving = part_assignment(self.driving_modified,current_machine,current_due_date,current_part_number,current_quantity,current_description,current_status,current_engineer, current_inventory)
+                        self.driving = part_assignment(self.driving,current_machine,current_due_date,current_part_number,current_quantity,current_description,current_status,current_engineer, current_inventory)
                     elif current_status == status.ISSUED:
-                        if project in self.modified:
-                            self.issued_modified = part_assignment(self.issued_modified, current_machine,
-                                                                current_due_date, current_part_number,
-                                                                current_quantity, current_description,
-                                                                current_status, current_engineer, current_inventory)
-                        self.issued = part_assignment(self.issued_modified, current_machine,
+                        self.issued = part_assignment(self.issued, current_machine,
                                                                 current_due_date, current_part_number,
                                                                 current_quantity, current_description,
                                                                 current_status, current_engineer, current_inventory)

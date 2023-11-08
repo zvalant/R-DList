@@ -6,7 +6,7 @@ import dataframe_column_titles as dct
 def part_attribute_finder(i, df, machine_val, date_val, status_val, engr_val):
     if machine_val != df[dct.MACHINE][i] and df[dct.MACHINE][i] != "nan":  # maintian correct machine
         machine_val = df[dct.MACHINE][i]
-    if date_val != df[dct.DUE_DATE][i] and df[dct.DUE_DATE][i] != "NaT":  # maintain correct date
+    if date_val != df[dct.DUE_DATE][i] and df[dct.DUE_DATE][i] != "nan" and df[dct.DUE_DATE][i] !="NAT":  # maintain correct date
         date_val = df[dct.DUE_DATE][i]
     if status_val != df[dct.STATUS][i] and df[dct.STATUS][i] != "nan":  # maintain correct status
         status_val = df[dct.STATUS][i]
