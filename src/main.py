@@ -8,9 +8,9 @@ TESTMODE = True
 CURRENT_FILE = "R&D Items Due_test.xlsx"
 PAST_FILE = "R&D Items Due_test_p.csv"
 ISSUED_FILE = "R&D Items Due_Issued_test.xlsx"
-DEMAND_PAST_FILE = f"G:\\SW\\_Administration\\R&D Items Test\\{PAST_FILE}"
+DEMAND_PAST_FILE = f"P:\\_R&D List Docs\\DependencyFiles\\{PAST_FILE}"
 DEMAND_CURRENT_FILE = f"G:\\SW\\_Administration\\R&D Items Test\\{CURRENT_FILE}"
-ISSUED_EXCEL_FILE = f"G:\\SW\\_Administration\\R&D Items Test\\{ISSUED_FILE}"
+ISSUED_EXCEL_FILE = f"P:\\_R&D List Docs\\{ISSUED_FILE}"
 demand_sheet_past = DemandSheet(DEMAND_PAST_FILE)
 demand_sheet_current = DemandSheet(DEMAND_CURRENT_FILE)
 
@@ -33,7 +33,7 @@ if TESTMODE:
             pdf_actions.create_issued_pdfs(sheet_delta.issued_change)
             utility.excel_export(sheet_delta.issued_change, ISSUED_EXCEL_FILE)
             pdf_actions.create_activity_pdf()
-            send_email = EmailManager()
+            send_email = EmailManager(pdf_actions.email_file_path)
             send_email.send_activity_pdf()
             send_email.close_smtp_connection()
         demand_sheet_current.dataframe.to_csv(DEMAND_PAST_FILE)

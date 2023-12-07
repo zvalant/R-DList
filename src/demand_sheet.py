@@ -46,12 +46,12 @@ class DemandSheet:
         self.dataframe.dropna(how="all", inplace=True)
         self.dataframe.replace({pd.NaT: np.nan}, inplace=True)
         self.dataframe["Due Date"] = pd.to_datetime(self.dataframe["Due Date"], errors="coerce")
-        self.dataframe["Due Date"] = self.dataframe["Due Date"].fillna(method="ffill")
+        self.dataframe["Due Date"] = self.dataframe["Due Date"].ffill()
         self.dataframe["Due Date"] = self.dataframe["Due Date"].dt.strftime("%m-%d-%Y")
-        self.dataframe["Machine"] = self.dataframe["Machine"].fillna(method='ffill')
-        self.dataframe["QTY"] = self.dataframe["QTY"].fillna(method='ffill')
-        self.dataframe["Status"] = self.dataframe["Status"].fillna(method='ffill')
-        self.dataframe["Engineer"] = self.dataframe["Engineer"].fillna(method='ffill')
+        self.dataframe["Machine"] = self.dataframe["Machine"].ffill()
+        self.dataframe["QTY"] = self.dataframe["QTY"].ffill()
+        self.dataframe["Status"] = self.dataframe["Status"].ffill()
+        self.dataframe["Engineer"] = self.dataframe["Engineer"].ffill()
         self.dataframe = self.dataframe.astype(str).fillna('')  # remove any empty cells with an empty string
         return self.dataframe
 

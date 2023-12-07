@@ -9,9 +9,9 @@ class PdfManager:
     def __init__(self,delta=None):
         self.delta = delta
         self.TITLE = "R&D Sheet Update"
-        self.driving_folder_path = "G:\\SW\\_Administration\\R&D Items Test\\pdfs\\DRIVING_2"
-        self.issued_folder_path = "G:\\SW\\_Administration\\R&D Items Test\\pdfs\\ISSUED_2"
-        self.email_file_path = f"G:\\SW\\_Administration\\R&D Items Test\\pdfs\\EMAIL_PDFS\\{self.TITLE}.pdf"
+        self.driving_folder_path = "P:\\_R&D List Docs\\pdfs\\DRIVING"
+        self.issued_folder_path = "P:\\_R&D List Docs\\pdfs\\ISSUED"
+        self.email_file_path = f"P:\\_R&D List Docs\\DependencyFiles\\{self.TITLE}.pdf"
         self.send_attempts = 0
 
 
@@ -66,7 +66,7 @@ class PdfManager:
                 # generate pdf for all projects in hash
                 pdf = FPDF(orientation="P", unit="pt", format="Letter")
                 pdf.add_page()
-                pdf.set_font(family="Times", style="B", size=24)
+                pdf.set_font(family="Times", style="B", size=28)
                 pdf.multi_cell(w=0, h=50, txt=f"{title} Issued: {current_time}")  # create pdf header with title of project
                 for part in demand[project].target_dates[target_date].parts:
                     current_part = demand[project].target_dates[target_date].parts[part]
@@ -87,25 +87,31 @@ class PdfManager:
                         time.sleep(10)
 
     def create_activity_pdf(self):
+        font_size_title = 34
+        font_size_project = 24
+        font_size_action = 24
+        font_size_date = 20
+        font_size_part = 18
         # generate pdf for all projects in hash
         pdf = FPDF(orientation="P", unit="pt", format="Letter")
         pdf.add_page()
-        pdf.set_font(family="Times", style="B", size=34)
+        pdf.set_font(family="Times", style="B", size=font_size_title)
         pdf.multi_cell(w=0, h=50, txt=self.TITLE, align="C")
         for action in self.delta.activity:
             if self.delta.activity[action] != {}:
-                pdf.set_font(family="Times", style="B", size=24)
+                pdf.set_font(family="Times", style="B", size=font_size_action)
                 pdf.multi_cell(w=0, h=50, txt=str(action), align="C")
             else:
                 continue
             for current_project in self.delta.activity[action]:
-                pdf.set_font(family="Times", style="B", size=18)
+                pdf.set_font(family="Times", style="B", size=font_size_project)
                 pdf.multi_cell(w=0, h=50, txt=str(current_project))
                 for target_date in self.delta.activity[action][current_project].target_dates:
+                    pdf.set_font(family="Times", style="B", size=font_size_date)
                     pdf.multi_cell(w=0, h=50, txt=str(target_date))
                     for part in self.delta.activity[action][current_project].target_dates[target_date].parts:
                         current_part = self.delta.activity[action][current_project].target_dates[target_date].parts[part]
-                        pdf.set_font(family="Times", style="B", size=18)
+                        pdf.set_font(family="Times", style="B", size=font_size_part)
                         pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  ({current_part.quantity}X)")
         while True:  # make sure this still works as intended
             try:

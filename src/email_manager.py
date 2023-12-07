@@ -9,8 +9,8 @@ import smtplib
 import email_messages as messages
 
 class EmailManager:
-    def __init__(self):
-        self.UPDATE_FILEPATH = "G:\\SW\\_Administration\\R&D Items Test\\pdfs\\EMAIL_PDFS\\R&D Sheet Update.pdf"
+    def __init__(self,filepath="None"):
+        self.UPDATE_FILEPATH = filepath
         self.SENDER = "DoNotReply@lincofood.com"
         self.SMTP_PORT = 25
         self.SMTP_SERVER = "smtp.lincofood.local"
@@ -19,6 +19,7 @@ class EmailManager:
         self.msg_txt = messages.EmailMessages()
         self.smtp_connection = smtplib.SMTP(self.SMTP_SERVER,self.SMTP_PORT)
         self.connection_on = False
+
 
     def send_activity_pdf(self):
         self.msg = MIMEMultipart()
