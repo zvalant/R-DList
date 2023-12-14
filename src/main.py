@@ -40,7 +40,7 @@ if TESTMODE:
         time.sleep(30)
 else:
     while True:
-        utility.target_sleep("4:15:00")
+        utility.target_sleep("5:15:00")
         demand_sheet_past.create_dataframe() #create dataframes for current and past files
         demand_sheet_current.create_dataframe()
         demand_sheet_past.demand_generator(demand_sheet_past.dataframe,PAST_FILE)
@@ -56,8 +56,8 @@ else:
             pdf_actions.create_issued_pdfs(sheet_delta.issued_change)
             utility.excel_export(sheet_delta.issued_change, ISSUED_EXCEL_FILE)
             pdf_actions.create_activity_pdf()
-            utility.target_sleep("7:00:00")
-            send_email = EmailManager()
+            utility.target_sleep("6:00:00")
+            send_email = EmailManager(pdf_actions.email_file_path)
             send_email.send_activity_pdf()
             send_email.close_smtp_connection()
         demand_sheet_current.dataframe.to_csv(DEMAND_PAST_FILE)
