@@ -115,5 +115,55 @@ def excel_export(issued,file_path):
 
 def runtime_differential(start_datetime,end_datetime):
     diff = end_datetime-start_datetime
-    diff_seconds = diff.total_seconds()+60
+    diff_seconds = diff.total_seconds()+1
     return diff_seconds
+
+def map_engineering_emails(file):
+    engineer_map = {}
+    try:
+        with open(file,"r") as file:
+            for line in file:
+                if len(line) > 1:
+                    name = line.split(".")[0].capitalize()
+                    engineer_map[name] = line[:-1]
+    except Exception as e:
+        print(e)
+    return engineer_map
+
+def collect_recipients(file):
+    recipients = []
+    try:
+        with open(file,"r") as file:
+            for line in file:
+                if len(line) >1:
+                    recipients.append(line[:-1])
+    except Exception as e:
+        print(e)
+    return recipients
+
+def email_credentials(file):
+    line_count = 1
+    try:
+        with open(file, "r") as file:
+            for line in file:
+                if line_count==1:
+                    sender = line[:-1]
+                elif line_count==2:
+                    port = int(line[:-1])
+                elif line_count==3:
+                    server = line[:-1]
+                line_count +=1
+    except Exception as e:
+        print(e)
+    return sender,port,server
+
+def date_refactor(dataframe):
+    column_title = "Due Date"
+    for index in range(len(dataframe[column_title])):
+        current_date = dataframe.loc[index,column_title]
+        if isinstance(current_date,float) and index>0:
+            dataframe.loc[index, column_title] = dataframe.loc[index-1, column_title]
+        elif isinstance(current_date,datetime):
+            dataframe.loc[index,column_title] = dataframe.loc[index,column_title].strftime("%Y-%m-%d")
+    return dataframe
+

@@ -7,24 +7,27 @@ import os
 import smtplib
 
 import email_messages as messages
+import utility
 
 class EmailManager:
     def __init__(self,filepath="None"):
+        self.email_credentials_file = "M:\\_R&D List Docs\\DependencyFiles\\EmailCredentials.txt"
+        self.email_list_file = "M:\\_R&D List Docs\\DependencyFiles\\AllEmails.txt"
         self.UPDATE_FILEPATH = filepath
-        self.SENDER = "DoNotReply@lincofood.com"
-        self.SMTP_PORT = 25
-        self.SMTP_SERVER = "smtp.lincofood.local"
+        self.SENDER,self.SMTP_PORT,self.SMTP_SERVER = utility.email_credentials(self.email_credentials_file)
         self.TITLE_UPDATE = "R&D Sheet Activity Report"
         self.SUBJECT_UPDATE = f"R&D Demand Update"
         self.msg_txt = messages.EmailMessages()
         self.smtp_connection = smtplib.SMTP(self.SMTP_SERVER,self.SMTP_PORT)
         self.connection_on = False
+        self.all_recipients = utility.collect_recipients(self.email_list_file)
+
 
 
     def send_activity_pdf(self):
         self.msg = MIMEMultipart()
         msg_txt = self.msg_txt.report
-        recipients = ["zac.valant@baader.com" ]
+        recipients = self.all_recipients
         self.msg["To"] = COMMASPACE.join(recipients)
         if not self.connection_on:
             self.smtp_connection.starttls()

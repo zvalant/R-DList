@@ -9,9 +9,9 @@ class PdfManager:
     def __init__(self,delta=None):
         self.delta = delta
         self.TITLE = "R&D Sheet Update"
-        self.driving_folder_path = "P:\\_R&D List Docs\\pdfs\\DRIVING"
-        self.issued_folder_path = "P:\\_R&D List Docs\\pdfs\\ISSUED"
-        self.email_file_path = f"P:\\_R&D List Docs\\DependencyFiles\\{self.TITLE}.pdf"
+        self.driving_folder_path = "M:\\_R&D List Docs\\pdfs\\DRIVING"
+        self.issued_folder_path = "M:\\_R&D List Docs\\pdfs\\ISSUED"
+        self.email_file_path = f"M:\\_R&D List Docs\\DependencyFiles\\{self.TITLE}.pdf"
         self.send_attempts = 0
 
 
@@ -39,7 +39,7 @@ class PdfManager:
                     else:
                         pdf.set_text_color(0,0,0)
                     pdf.set_font(family=font_style , style="B", size=18)
-                    pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}X)    OH: {current_part.inventory}")
+                    pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}X) \n   OH: {current_part.inventory}")
                     pdf.set_text_color(0,0,0)
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             filename = project.replace("/", "-")

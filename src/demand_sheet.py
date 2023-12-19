@@ -45,9 +45,7 @@ class DemandSheet:
     def dataframe_setup(self):
         self.dataframe.dropna(how="all", inplace=True)
         self.dataframe.replace({pd.NaT: np.nan}, inplace=True)
-        self.dataframe["Due Date"] = pd.to_datetime(self.dataframe["Due Date"], errors="coerce")
-        self.dataframe["Due Date"] = self.dataframe["Due Date"].ffill()
-        self.dataframe["Due Date"] = self.dataframe["Due Date"].dt.strftime("%m-%d-%Y")
+        self.dataframe = utility.date_refactor(self.dataframe)
         self.dataframe["Machine"] = self.dataframe["Machine"].ffill()
         self.dataframe["QTY"] = self.dataframe["QTY"].ffill()
         self.dataframe["Status"] = self.dataframe["Status"].ffill()
@@ -65,7 +63,6 @@ class DemandSheet:
         notes_val = "None"
         error_email = EmailManager()
         engineer_email = EmailDirectory()
-
         for row in range(len(demand_sheet)):
             machine_val, date_val, status_val, engr_val, notes_val, key = utility.part_attribute_finder(row, demand_sheet, machine_val,
                                                                                              date_val, status_val, engr_val,notes_val)

@@ -32,7 +32,7 @@ class DataComparison:
         self.modified = set()
         self.error_found = False
 
-    def activity_search(self,current_sheet):
+    def activity_search(self,current_sheet,past_sheet):
         error_email = EmailManager()
         engineer_email = EmailDirectory()
         for id in self.current_cache:
@@ -52,12 +52,14 @@ class DataComparison:
                 past_status = self.past_cache[id].status
 
                 if current_part_number != past_part_number:
-                    row = current_sheet[current_sheet["UniqueID"] == id]
-                    row_index = int(row.index.values) + 2
+                    current_row = current_sheet[current_sheet["UniqueID"] == id]
+                    past_row = past_sheet[past_sheet["UniqueID"] == id]
+
+                    row_index = int(current_row.index.values) + 2
                     msg = EmailMessages(0,row_index)
                     message = msg.error_reused_id
                     error_email.error_email(message, engineer_email.get_email(current_engineer))
-                    current_sheet.at[row_index-2,"Part Number"] = past_part_number
+                    current_sheet.loc[row_index-2,["Machine", "Part Number", "QTY", "Due Date", "Status"]] = [past_machine,past_part_number,past_quantity,past_due_date,past_status]
 
                     continue
 
