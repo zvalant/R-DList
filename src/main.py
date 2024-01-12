@@ -48,7 +48,7 @@ if TESTMODE:
         time.sleep(30)
 else:
     while True:
-        utility.target_sleep("5:15:00")
+        utility.target_sleep("5:00:00")
         demand_sheet_past.create_dataframe() #create dataframes for current and past files
         demand_sheet_current.create_dataframe()
         demand_sheet_past.demand_generator(demand_sheet_past.dataframe,PAST_FILE)
