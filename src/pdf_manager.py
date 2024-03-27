@@ -5,6 +5,7 @@ import datetime
 from email_manager import EmailManager
 from email_directory import EmailDirectory
 from email_messages import EmailMessages
+from utility import is_number
 class PdfManager:
     def __init__(self,delta=None):
         self.delta = delta
@@ -31,14 +32,18 @@ class PdfManager:
             for due_date in sorted_dates:
                 pdf.set_font(family=font_style , style="B", size=24)
                 pdf.multi_cell(w=0, h=50, txt=due_date)  # create pdf header with title of project
-                pdf.set_font(family=font_style , style="B", size=18)
+                pdf.set_font(family=font_style, style="B", size=18)
                 for part in current_demand[project].target_dates[due_date].parts:
                     current_part = current_demand[project].target_dates[due_date].parts[part]
-                    if current_part.inventory != "Not Found" and float(current_part.quantity) <= float(current_part.inventory):
+                    if not is_number(current_part.quantity):
+                        pdf.set_text_color(200, 0, 0)
+                        pdf.multi_cell(w=0, h=50,txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}) \n   OH: {current_part.inventory} (QTY FAILED FLOAT CONVERSION)")
+                        pdf.set_text_color(0, 0, 0)
+                        continue
+                    elif current_part.inventory != "Not Found" and float(current_part.quantity) <= float(current_part.inventory):
                         pdf.set_text_color(0,200,0)
                     else:
                         pdf.set_text_color(0,0,0)
-                    pdf.set_font(family=font_style , style="B", size=18)
                     pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}X) \n   OH: {current_part.inventory}")
                     pdf.set_text_color(0,0,0)
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -48,16 +53,16 @@ class PdfManager:
             filename = filename.replace(":", "-")
             print(filename)
             while True:
-                if self.send_attempts > 30:
+                if self.send_attempts == 30:
                     msg = EmailMessages(project)
-                    message = msg.locked_pdf_driving
-                    error_email.error_email(message, engineer_email.get_email(current_part.engineer))#change to email all
+                    message = msg.error_encoding_pdf
+                    error_email.error_email(message, engineer_email.get_email(current_part.engineer))#
                 try:
                     pdf.output(f"{self.driving_folder_path}//{filename}.pdf")
                     break
                 except Exception as e:
-                    print(f"{e} PDF Still Open")
-                    time.sleep(1)
+                    print(f"{e} PDF cant encode")
+                    time.sleep(10)
                     self.send_attempts +=1
     def create_issued_pdfs(self,demand):
         font_style = "Arial"

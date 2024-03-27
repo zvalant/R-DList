@@ -159,6 +159,7 @@ def email_credentials(file):
 
 def date_refactor(dataframe):
     column_title = "Due Date"
+    print(len(dataframe[column_title]))
     for index in range(len(dataframe[column_title])):
         current_date = dataframe.loc[index,column_title]
         if isinstance(current_date,float) and index>0:
@@ -166,4 +167,10 @@ def date_refactor(dataframe):
         elif isinstance(current_date,datetime):
             dataframe.loc[index,column_title] = dataframe.loc[index,column_title].strftime("%Y-%m-%d")
     return dataframe
+
+def is_number(string):
+        if string.replace(".", "").isnumeric():
+            return True
+        else:
+            return False
 
