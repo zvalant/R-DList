@@ -17,6 +17,7 @@ class DataComparison:
         self.driving_change = {}
         self.picked_change = {}
         self.issued_change = {}
+        self.complete_change = {}
         self.driving = {}
         self.issued = {}
         self.activity = {
@@ -27,7 +28,8 @@ class DataComparison:
             "Date Change": self.date_change,
             "Status Change: Driving":self.driving_change,
             "Status Change: Picked": self.picked_change,
-            "Status Change: Issued": self.issued_change
+            "Status Change: Issued": self.issued_change,
+            "Status Change: Complete": self.complete_change
         }
         self.modified = set()
         self.error_found = False
@@ -94,6 +96,14 @@ class DataComparison:
                                                                    current_quantity,
                                                                    current_description, current_status,
                                                                    current_engineer)
+                    elif current_status == status.COMPLETE:
+                        self.complete_change = part_assignment(self.complete_change,
+                                                             current_machine, current_due_date,
+                                                             current_part_number,
+                                                             current_quantity,
+                                                             current_description, current_status,
+                                                             current_engineer)
+
                     elif current_status == status.ISSUED:
                         self.issued_change = part_assignment(self.issued_change,
                                                                    current_machine, current_due_date,
@@ -134,8 +144,9 @@ class DataComparison:
                     current_status = self.current_projects[project].target_dates[due_date].parts[part].status
                     current_engineer = self.current_projects[project].target_dates[due_date].parts[part].engineer
                     current_inventory = self.current_projects[project].target_dates[due_date].parts[part].inventory
+                    current_pm = self.current_projects[project].target_dates[due_date].parts[part].pm
                     if current_status == status.DRIVING:
-                        self.driving = part_assignment(self.driving,current_machine,current_due_date,current_part_number,current_quantity,current_description,current_status,current_engineer, current_inventory)
+                        self.driving = part_assignment(self.driving,current_machine,current_due_date,current_part_number,current_quantity,current_description,current_status,current_engineer, current_inventory,pm=current_pm)
                     elif current_status == status.ISSUED:
                         self.issued = part_assignment(self.issued, current_machine,
                                                                 current_due_date, current_part_number,

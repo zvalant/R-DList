@@ -4,13 +4,13 @@ from data_comparison import DataComparison
 from pdf_manager import PdfManager
 import utility
 from email_manager import EmailManager
-TESTMODE = False
-CURRENT_FILE = "R&D Items Due.xlsx"
-PAST_FILE = "R&D Items Due_p.csv"
-ISSUED_FILE = "R&D Items Due_Issued.xlsx"
-DEMAND_PAST_FILE = f"M:\\_R&D List Docs\\DependencyFiles\\{PAST_FILE}"
-DEMAND_CURRENT_FILE = f"G:\\SW\\_Administration\\R&D Items Due\\{CURRENT_FILE}"
-ISSUED_EXCEL_FILE = f"M:\\_R&D List Docs\\{ISSUED_FILE}"
+TESTMODE = True
+CURRENT_FILE = "R&D Items Due_test.xlsx"
+PAST_FILE = "R&D Items Due_test_p.csv"
+ISSUED_FILE = "R&D Items Due_Issued_test.xlsx"
+DEMAND_PAST_FILE = f"G:\\SW\\_Administration\\R&D Items Due\\test\\{PAST_FILE}"
+DEMAND_CURRENT_FILE = f"G:\\SW\\_Administration\\R&D Items Due\\test\\{CURRENT_FILE}"
+ISSUED_EXCEL_FILE = f"G:\\SW\\_Administration\\R&D Items Due\\test\\{ISSUED_FILE}"
 demand_sheet_past = DemandSheet(DEMAND_PAST_FILE)
 demand_sheet_current = DemandSheet(DEMAND_CURRENT_FILE)
 

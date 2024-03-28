@@ -12,7 +12,7 @@ import utility
 class EmailManager:
     def __init__(self,filepath="None"):
         self.email_credentials_file = "M:\\_R&D List Docs\\DependencyFiles\\EmailCredentials.txt"
-        self.email_list_file = "M:\\_R&D List Docs\\DependencyFiles\\AllEmails.txt"
+        self.email_list_file = "M:\\_R&D List Docs\\DependencyFiles\\AllEmails_test.txt"
         self.UPDATE_FILEPATH = filepath
         self.SENDER,self.SMTP_PORT,self.SMTP_SERVER = utility.email_credentials(self.email_credentials_file)
         self.TITLE_UPDATE = "R&D Sheet Activity Report"
