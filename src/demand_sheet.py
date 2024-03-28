@@ -7,6 +7,7 @@ import dataframe_column_titles as dct
 import utility
 from id_values import IDValues
 from email_directory import EmailDirectory
+import dataframe_column_titles as column
 
 class DemandSheet:
     def __init__(self, file):
@@ -46,10 +47,11 @@ class DemandSheet:
         self.dataframe.dropna(how="all", inplace=True)
         self.dataframe.replace({pd.NaT: np.nan}, inplace=True)
         self.dataframe = utility.date_refactor(self.dataframe)
-        self.dataframe["Machine"] = self.dataframe["Machine"].ffill()
-        self.dataframe["QTY"] = self.dataframe["QTY"].ffill()
-        self.dataframe["Status"] = self.dataframe["Status"].ffill()
-        self.dataframe["Engineer"] = self.dataframe["Engineer"].ffill()
+        self.dataframe[column.PM] = self.dataframe[column.PM].ffill()
+        self.dataframe[column.MACHINE] = self.dataframe[column.MACHINE].ffill()
+        self.dataframe[column.QUANTITY] = self.dataframe[column.QUANTITY].ffill()
+        self.dataframe[column.STATUS] = self.dataframe[column.STATUS].ffill()
+        self.dataframe[column.ENGINEER] = self.dataframe[column.ENGINEER].ffill()
         self.dataframe = self.dataframe.astype(str).fillna('')  # remove any empty cells with an empty string
         return self.dataframe
 
@@ -83,9 +85,10 @@ class DemandSheet:
             current_project = f"{machine_val}"
             quantity = demand_sheet[dct.QUANTITY][row]
             description = demand_sheet[dct.DESCRIPTION][row]
+            pm = demand_sheet[dct.PM][row]
             #check to see if part exists in project already and generate error if it exists otherwise create part inside existing project/target date.
             if current_project not in self.projects or date_val not in self.projects[current_project].target_dates or current_part not in self.projects[current_project].target_dates[date_val].parts:
-                self.projects = utility.part_assignment(self.projects, current_project, date_val, current_part, quantity, description, status_val, engr_val, notes = notes_val)
+                self.projects = utility.part_assignment(self.projects, current_project, date_val, current_part, quantity, description, status_val, engr_val, notes = notes_val, pm=pm )
             else:
                 message = msg.error_duplicate_part
                 error_email.error_email(message,engineer_email.get_email(engr_val))

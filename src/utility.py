@@ -20,12 +20,12 @@ def part_attribute_finder(i, df, machine_val, date_val, status_val, engr_val,not
 
     key = df[dct.UNIQUE_ID][i]
     return machine_val, date_val, status_val, engr_val, notes_val, key
-def part_assignment(activity,project,due_date,part,qty,description,status,engineer,inventory="Not Found",notes="Not Found"):
+def part_assignment(activity,project,due_date,part,qty,description,status,engineer,inventory="Not Found",notes="Not Found",pm="Not Found"):
     if project not in activity:
         activity[project] = pc.Project(project)
     if due_date not in activity[project].target_dates:
         activity[project].add_date(due_date)
-    activity[project].target_dates[due_date].add_part(part,qty,description,status,engineer,inventory,notes)
+    activity[project].target_dates[due_date].add_part(part,qty,description,status,engineer,inventory,notes,pm)
     return activity
 def current_mrp_date():
     current_date = datetime.today()

@@ -10,9 +10,9 @@ class PdfManager:
     def __init__(self,delta=None):
         self.delta = delta
         self.TITLE = "R&D Sheet Update"
-        self.driving_folder_path = "M:\\_R&D List Docs\\pdfs\\DRIVING"
-        self.issued_folder_path = "M:\\_R&D List Docs\\pdfs\\ISSUED"
-        self.email_file_path = f"M:\\_R&D List Docs\\DependencyFiles\\{self.TITLE}.pdf"
+        self.driving_folder_path = "G:\\SW\\_Administration\\R&D Items Due\\test\\testpdfs\\DRIVING"
+        self.issued_folder_path = "G:\\SW\\_Administration\\R&D Items Due\\test\\testpdfs\\ISSUED"
+        self.email_file_path = f"G:\\SW\\_Administration\\R&D Items Due\\test\\{self.TITLE}.pdf"
         self.send_attempts = 0
 
 
@@ -37,14 +37,14 @@ class PdfManager:
                     current_part = current_demand[project].target_dates[due_date].parts[part]
                     if not is_number(current_part.quantity):
                         pdf.set_text_color(200, 0, 0)
-                        pdf.multi_cell(w=0, h=50,txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}) \n   OH: {current_part.inventory} (QTY FAILED FLOAT CONVERSION)")
+                        pdf.multi_cell(w=0, h=50,txt=f"     {part}:  {current_part.description}  P/M: {current_part.pm} \nREQ: ({current_part.quantity}) (QTY FAILED FLOAT CONV) OH: {current_part.inventory} ")
                         pdf.set_text_color(0, 0, 0)
                         continue
                     elif current_part.inventory != "Not Found" and float(current_part.quantity) <= float(current_part.inventory):
                         pdf.set_text_color(0,200,0)
                     else:
                         pdf.set_text_color(0,0,0)
-                    pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  REQ: ({current_part.quantity}X) \n   OH: {current_part.inventory}")
+                    pdf.multi_cell(w=0, h=50, txt=f"     {part}:  {current_part.description}  P/M: {current_part.pm} \nREQ: ({current_part.quantity}X) OH: {current_part.inventory}")
                     pdf.set_text_color(0,0,0)
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             filename = project.replace("/", "-")
